@@ -7,6 +7,7 @@ app.use(express.json());
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) });
 app.use(morgan(':method :url :status :response-time ms :body'));
 app.use(cors());
+app.use(express.static("build"));
 
 let persons = [
     {
@@ -45,25 +46,6 @@ app.get("/api/persons", (req, res) => {
     res.json(persons);
 })
 
-// Get specific person
-app.get("/api/persons/:id", (req, res) => {
-    const id = Number(req.params.id);
-    const person = persons.find(person => person.id === id);
-
-    if(person) {
-        res.json(person);
-    } else {
-        res.status(404).end();
-    }
-})
-
-// Delete a specific person
-app.delete("/api/persons/:id", (req, res) => {
-    const id = Number(req.params.id);
-    persons = persons.filter(person => person.id !== id);
-    res.status(204).end();
-})
-
 // Adding new person
 const generateId = () => {
     return Math.floor(Math.random() * Math.floor(100000));
@@ -95,7 +77,26 @@ app.post("/api/persons", (req, res) => {
     res.json(person);
 })
 
-app.use(express.static("build"));
+
+// Get specific person
+app.get("/api/persons/:id", (req, res) => {
+    const id = Number(req.params.id);
+    const person = persons.find(person => person.id === id);
+
+    if(person) {
+        res.json(person);
+    } else {
+        res.status(404).end();
+    }
+})
+
+// Delete a specific person
+app.delete("/api/persons/:id", (req, res) => {
+    const id = Number(req.params.id);
+    persons = persons.filter(person => person.id !== id);
+    res.status(204).end();
+})
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
